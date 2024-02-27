@@ -1,0 +1,2 @@
+class CounterReachedMaximumError(Exception):
+    pass

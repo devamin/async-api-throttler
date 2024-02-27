@@ -1,0 +1,124 @@
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/mypy.xml
+
+# Sensitive or high-churn files:
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# Gradle:
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# CMake
+cmake-build-debug/
+
+# Mongo Explorer plugin:
+.idea/**/mongoSettings.xml
+
+## File-based project format:
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+/out/
+
+# Eclipse
+.project
+.pydevproject
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Cursive Clojure plugin
+.idea/replstate.xml
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Editor-based Rest Client
+.idea/httpRequests
+
+__pycache__
+.ipynb_checkpoints
+.pyc
+
+# Cython objects
+/**/*.so
+/**/*.pyd
+/**/*.cpp
+
+# Local files
+.DS_Store
+/notebooks
+/data/cache/
+/mprofile*
+.history
+venv
+/hummingbot
+
+# Distribution files
+/build
+/dist
+/src
+/*.egg-info
+*.whl
+
+# Node and NPM files
+/node_modules
+/package-lock.json
+
+# Vim temp files
+*.swp
+
+# code coverage reports
+.coverage*
+/cover/
+/htmlcov/
+
+# exclude sesitive conf
+/conf/*config*.py
+/conf/*secret*.py
+
+# Eclipse
+.project
+.pydevproject
+
+*.csv
+*.xlsx
+/conf/archive/
+/conf/dev/
+/conf/prod/
+/conf/staging/
+/kubernetes/**/*config*.py
+.idea/inspectionProfiles/Project_Default.xml
+
+# local python-dotenv / pydantic overrides
+**/.env*
+!**/.env*.example
+
+# Airflow local environment
+/local_idh_mwaa/mnt
+/local/
+**.db
+celerybeat-schedule
