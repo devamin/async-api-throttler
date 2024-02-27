@@ -18,14 +18,17 @@ class AsyncApiThrottler:
         self._parent_throttler:AsyncApiThrottler = parent_throttler
         self._count_down:Optional[CountDown] = None
         if self._max_calls is not None and self._period is not None:
+            self._max_calls -=1 #leave some breathing room
             self._count_down = CountDown(
-                                    interval=(period*60/max_calls), 
+                                    interval=(period*60)/max_calls, 
                                     maximum=max_calls
                                 )
 
     @property
     def locked(self) -> bool:
-        return not self._count_down.free_room if self._count_down else False
+        locked = not self._count_down.free_room if self._count_down else False
+        locked = locked or self._parent_throttler.locked if self._parent_throttler else False
+        return locked
     
     async def consume(self):
         if self.locked:

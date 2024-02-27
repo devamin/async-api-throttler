@@ -4,7 +4,7 @@ from async_api_throttler.exceptions import CounterReachedMaximumError
 
 
 class CountDown:
-    def __init__(self, interval:int = 1, initial_value:int=0, minimum:int=0, maximum:int=float('inf')):
+    def __init__(self, interval:float = 1.0, initial_value:int=0, minimum:int=0, maximum:int=float('inf')):
         assert interval > 0
         self._value = initial_value
         self._min = minimum
