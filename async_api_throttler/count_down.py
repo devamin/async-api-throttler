@@ -14,7 +14,10 @@ class CountDown:
         self._waiters = asyncio.Queue()
         
     def __del__(self):
-        self._count_down_task.cancel()
+        try:
+            self._count_down_task.cancel()
+        except RuntimeError:
+            pass
         
     @property
     def free_room(self):

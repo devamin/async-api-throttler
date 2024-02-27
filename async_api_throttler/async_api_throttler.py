@@ -1,7 +1,6 @@
 from functools import wraps
 import logging
 from typing import Optional
-
 from async_api_throttler.count_down import CountDown
 
 logger = logging.getLogger(__name__)
@@ -20,14 +19,14 @@ class AsyncApiThrottler:
         if self._max_calls is not None and self._period is not None:
             self._max_calls -=1 #leave some breathing room
             self._count_down = CountDown(
-                                    interval=(period*60)/max_calls, 
+                                    interval=(period*60)/self._max_calls, 
                                     maximum=max_calls
                                 )
 
     @property
     def locked(self) -> bool:
         locked = not self._count_down.free_room if self._count_down else False
-        locked = locked or self._parent_throttler.locked if self._parent_throttler else False
+        locked = locked or self._parent_throttler.locked if self._parent_throttler else locked
         return locked
     
     async def consume(self):
@@ -38,8 +37,11 @@ class AsyncApiThrottler:
         if self._parent_throttler:
             await self._parent_throttler.consume()
         
-    def limits(self, calls:int, period:int):
-        func_throttler = AsyncApiThrottler(max_calls=calls, period=period, parent_throttler=self)
+    def limits(self, calls: Optional[int] = None, period:Optional[int] = None):
+        if calls and period:
+            func_throttler = AsyncApiThrottler(max_calls=calls, period=period, parent_throttler=self)
+        else:
+            func_throttler = self
         def limits_wrapper(func):
             @wraps(func)
             async def wrapper(*args, **kargs):

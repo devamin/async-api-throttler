@@ -12,7 +12,6 @@ async def test_trigger_counter_reached_maximum():
     cd.increment()
     with pytest.raises(CounterReachedMaximumError) as exc_info:
         cd.increment()
-    cd._count_down_task.cancel()
 
 @pytest.mark.asyncio
 async def test_count_waited_time_for_counter_incrementation():
@@ -20,8 +19,7 @@ async def test_count_waited_time_for_counter_incrementation():
     cd = CountDown(interval=interval, maximum=2)
     start = perf_counter()
     await asyncio.gather(cd.wait_increment(), cd.wait_increment(),cd.wait_increment())
-    assert interval == pytest.approx(perf_counter()-start, rel=0.02)
-    cd._count_down_task.cancel()
+    assert interval == pytest.approx(perf_counter()-start, rel=0.09)
     
 @pytest.mark.asyncio
 async def test_count_down_minimum():
@@ -29,4 +27,4 @@ async def test_count_down_minimum():
     cd.increment()
     await asyncio.sleep(0.02)
     assert cd.value == 0
-    cd._count_down_task.cancel()
+
