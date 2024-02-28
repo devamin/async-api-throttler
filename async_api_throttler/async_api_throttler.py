@@ -1,3 +1,5 @@
+import asyncio
+from contextlib import AsyncExitStack, asynccontextmanager
 from functools import wraps
 import logging
 from typing import Optional
@@ -17,7 +19,6 @@ class AsyncApiThrottler:
         self._parent_throttler:AsyncApiThrottler = parent_throttler
         self._count_down:Optional[CountDown] = None
         if self._max_calls is not None and self._period is not None:
-            self._max_calls -=1 #leave some breathing room
             self._count_down = CountDown(
                                     interval=(period*60)/self._max_calls, 
                                     maximum=max_calls
@@ -29,14 +30,23 @@ class AsyncApiThrottler:
         locked = locked or self._parent_throttler.locked if self._parent_throttler else locked
         return locked
     
+    @asynccontextmanager
     async def consume(self):
+        contexts = []
         if self.locked:
-            logger.warn("Api Throttler reached limit")
+            logger.warning("Api Throttler reached limit")
         if self._count_down:
-            await self._count_down.wait_increment()
+            contexts.append(self._count_down.wait_increment())
         if self._parent_throttler:
-            await self._parent_throttler.consume()
-        
+            contexts.append(self._parent_throttler.consume())
+        if contexts:
+            async with AsyncExitStack() as stack:
+                await asyncio.gather(*[stack.enter_async_context(ctx) for ctx in contexts])
+                yield
+        else:
+            yield
+            
+            
     def limits(self, calls: Optional[int] = None, period:Optional[int] = None):
         if calls and period:
             func_throttler = AsyncApiThrottler(max_calls=calls, period=period, parent_throttler=self)
@@ -45,7 +55,8 @@ class AsyncApiThrottler:
         def limits_wrapper(func):
             @wraps(func)
             async def wrapper(*args, **kargs):
-                await func_throttler.consume()
-                return await func(*args, **kargs)
+                async with func_throttler.consume():
+                    res = await func(*args, **kargs)
+                return res
             return wrapper
         return limits_wrapper
