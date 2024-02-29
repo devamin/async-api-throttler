@@ -19,6 +19,8 @@ class AsyncApiThrottler:
         self._parent_throttler:AsyncApiThrottler = parent_throttler
         self._count_down:Optional[CountDown] = None
         if self._max_calls is not None and self._period is not None:
+            #Breathingroom
+            self._max_calls =self._max_calls-1 if self._max_call > 1 else self._max_calls
             self._count_down = CountDown(
                                     interval=(period*60)/self._max_calls, 
                                     maximum=max_calls
