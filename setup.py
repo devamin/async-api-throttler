@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='async_api_throttler',
-    version='0.1.0',
+    version='0.1.1',
     packages=find_packages(exclude=["tests*", "local"]),
     install_requires=[],
     author='Amine Benkhouya',
