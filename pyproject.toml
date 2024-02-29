@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "async-api-throttler"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["amin <amine.benkhouya@gmail.com>"]
 readme = "README.md"
