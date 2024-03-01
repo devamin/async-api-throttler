@@ -1,6 +1,5 @@
 import asyncio
 from contextlib import asynccontextmanager, contextmanager
-from datetime import datetime
 import time
 
 from async_api_throttler.exceptions import CounterReachedMaximumError
@@ -42,9 +41,9 @@ class CountDown:
             self._value +=1
             yield 
             if p_value == 0:
-                self._start_time = time.time()
+                self._start_time = time.monotonic()
             if self._value == self._max:
-                self._max_time = time.time()
+                self._max_time = time.monotonic()
         else:
             raise CounterReachedMaximumError
     

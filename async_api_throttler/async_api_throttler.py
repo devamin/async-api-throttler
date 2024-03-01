@@ -13,14 +13,16 @@ class AsyncApiThrottler:
                  max_calls:Optional[int] = None, 
                  period:Optional[int] = None,
                  parent_throttler:Optional["AsyncApiThrottler"]=None,
+                 active:Optional[bool] = True
                  ):
+        self.active = active
         self._max_calls = max_calls
         self._period = period
         self._parent_throttler:AsyncApiThrottler = parent_throttler
         self._count_down:Optional[CountDown] = None
         if self._max_calls is not None and self._period is not None:
             #Breathingroom
-            self._max_calls =self._max_calls-1 if self._max_call > 1 else self._max_calls
+            self._max_calls =self._max_calls-1 if self._max_calls > 1 else self._max_calls
             self._count_down = CountDown(
                                     interval=(period*60)/self._max_calls, 
                                     maximum=max_calls
@@ -50,15 +52,21 @@ class AsyncApiThrottler:
             
             
     def limits(self, calls: Optional[int] = None, period:Optional[int] = None):
-        if calls and period:
+        if calls and period and self.active:
             func_throttler = AsyncApiThrottler(max_calls=calls, period=period, parent_throttler=self)
-        else:
+        elif self.active:
             func_throttler = self
+        else:
+            func_throttler = None
+            
         def limits_wrapper(func):
             @wraps(func)
             async def wrapper(*args, **kargs):
-                async with func_throttler.consume():
-                    res = await func(*args, **kargs)
+                if func_throttler:
+                    async with func_throttler.consume():
+                        res = await func(*args, **kargs)
+                else:
+                    res = await func(*args, **kargs)    
                 return res
             return wrapper
         return limits_wrapper
